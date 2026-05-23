@@ -1,6 +1,7 @@
 package com.marketsense.config;
 
 
+import com.marketsense.auth.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +35,14 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers("/api/**").permitAll()
+                                .requestMatchers("/api/auth/**").permitAll()
+
+                                .requestMatchers("/api/stocks/**").permitAll()
+
+                                .requestMatchers("/api/watchlist/**").authenticated()
+                                .requestMatchers("/api/ai/**").authenticated()
+                                .requestMatchers("/api/user/profile").authenticated()
+
 //                        .requestMatchers("/auth/signup", "/auth/login").permitAll()
 //                        .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()

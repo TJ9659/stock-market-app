@@ -294,9 +294,59 @@ export const TICKER_WIDGET_CONFIG = {
   showSymbolLogo: true,
 };
 
-export const SYMBOL_INFO_WIDGET_CONFIG = (symbol : string) => ({
-  symbol: `NASDAQ:${symbol}`,
+export const SYMBOL_INFO_WIDGET_CONFIG = (symbol: string) => ({
+  symbol: `${symbol}`,
   colorTheme: "dark",
   isTransparent: false,
   locale: "en",
+});
+
+export const ADVANCED_REAL_TIME_CHART_WIDGET_CONFIG = (symbol: string) => ({
+  allow_symbol_change: true,
+  calendar: false,
+  details: false,
+  hide_side_toolbar: true,
+  hide_top_toolbar: false,
+  hide_legend: false,
+  hide_volume: false,
+  hotlist: false,
+  interval: "D",
+  locale: "en",
+  save_image: true,
+  style: "1",
+  symbol: `${symbol}`,
+  theme: "dark",
+  timezone: "Etc/UTC",
+  backgroundColor: "#000000",
+  gridColor: "rgba(46, 46, 46, 0.06)",
+  watchlist: [],
+  withdateranges: false,
+  compareSymbols: [],
+  studies: [],
+  autosize: true,
+  width: "100%",
+  height: "100%",
+});
+
+export const TECHNICAL_ANALYSIS_WIDGET_CONFIG = (symbol: string) => ({
+  colorTheme: "dark",
+  displayMode: "single",
+  isTransparent: false,
+  locale: "en",
+  interval: "1m",
+  disableInterval: false,
+  width: 425,
+  height: 450,
+  symbol: `${symbol}`,
+  showIntervalTabs: true,
+});
+
+export const FUNDAMENTAL_DATA_WIDGET_CONFIG = (symbol: string) => ({
+  symbol: `${symbol}`,
+  colorTheme: "dark",
+  displayMode: "regular",
+  isTransparent: false,
+  locale: "en",
+  width: 400,
+  height: 400,
 });

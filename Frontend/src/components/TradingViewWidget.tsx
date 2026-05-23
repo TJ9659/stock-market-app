@@ -13,20 +13,24 @@ interface TradingViewWidgetProps {
 const TradingViewWidget = ({
   scriptUrl,
   height = 600,
-  width="100%",
+  width = "100%",
   className,
   config,
-  title,
 }: TradingViewWidgetProps) => {
   const containerRef = useTradingViewWidget({ scriptUrl, config });
 
   return (
-    <div>
+    <div 
+      style={{ height: `${height}px`, width: width }} 
+      className={`relative overflow-hidden ${className}`}
+    >
       <div
         ref={containerRef}
-        style={{ height: `${height}px`, width: `${width}` }}
-        className={`tradingview-widget-container w-full rounded-xl overflow-hidden border border-gray-800 shadow-2xl ${className}`}
-      ></div>
+        style={{ height: "100%", width: "100%" }}
+        className="tradingview-widget-container"
+      >
+        <div className="tradingview-widget-container__widget" style={{ height: "100%", width: "100%" }}></div>
+      </div>
     </div>
   );
 };

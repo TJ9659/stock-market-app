@@ -1,11 +1,14 @@
 import { Menu, Search, X } from "lucide-react";
 import { useState } from "react";
-import { NavLink } from "react-router"; // Standard for React Router
-import { GlobalSearch } from "./GlobalSearch";
+import { NavLink, useNavigate } from "react-router"; // Standard for React Router
+import { GlobalSearch } from "./stock-searchbar/GlobalSearch";
+import { useAuth } from "../context/AuthContext";
+import { UserNav } from "./UserNav";
+import { MobileUserNav } from "./MobileUserNav";
 
 const links = [
-  { name: "Markets", to: "/markets" },
-  { name: "Watchlists", to: "/watchlists" },
+  { name: "Markets", to: "/markets", requiresAuth: false },
+  { name: "Watchlists", to: "/watchlists", requiresAuth: true },
 ];
 
 const mobileLinkStyles = ({ isActive }: any) =>
@@ -15,6 +18,9 @@ const mobileLinkStyles = ({ isActive }: any) =>
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
 
   return (
     <div className="fixed top-0 w-full z-50 px-4 py-4">
@@ -30,30 +36,30 @@ const Header = () => {
           </NavLink>
 
           <nav className="hidden lg:flex items-center gap-1">
-            {links.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.to}
-                className={({ isActive }) =>
-                  `px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                    isActive
-                      ? "text-emerald-400 bg-gray-800"
-                      : "text-gray-300 hover:text-white hover:bg-gray-800"
-                  }`
-                }
-              >
-                {link.name}
-              </NavLink>
-            ))}
+            {links
+              .filter((link) => !link.requiresAuth || isAuthenticated)
+              .map((link) => (
+                <NavLink
+                  key={link.name}
+                  to={link.to}
+                  className={({ isActive }) =>
+                    `px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                      isActive
+                        ? "text-emerald-400 bg-gray-800"
+                        : "text-gray-300 hover:text-white hover:bg-gray-800"
+                    }`
+                  }
+                >
+                  {link.name}
+                </NavLink>
+              ))}
 
             <GlobalSearch />
           </nav>
         </div>
 
         <div className="flex items-center gap-4">
-          <button className="hidden md:block px-6 py-2 text-sm font-bold text-black bg-emerald-500 rounded-full hover:bg-emerald-400 transition-all">
-            Get Started
-          </button>
+          <UserNav />
 
           <button
             onClick={() => setIsOpen(true)}
@@ -96,14 +102,9 @@ const Header = () => {
                 {link.name}
               </NavLink>
             ))}
-            <GlobalSearch setMobileMenuOpen={setIsOpen}/>
+            <GlobalSearch setMobileMenuOpen={setIsOpen} />
           </nav>
-
-          <div className="mt-auto p-8">
-            <button className="w-full py-4 text-lg font-bold text-black bg-emerald-500 rounded-2xl hover:bg-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-              Get Started
-            </button>
-          </div>
+          <MobileUserNav/>
         </div>
       </div>
     </div>

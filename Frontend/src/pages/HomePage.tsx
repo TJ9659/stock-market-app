@@ -16,6 +16,7 @@ const Home = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
         {/* left column */}
         <div className="flex flex-col gap-10">
+            
           <div className="flex flex-col gap-4">
             <h2 className="text-xl font-bold text-white tracking-tight">
               Market Overview
