@@ -39,7 +39,7 @@ public class AuthenticationController {
     public ResponseEntity<?> signup(@Valid @RequestBody RegisterUserDto registerUserDto, BindingResult result){
 
         if(userRepository.existsByEmail(registerUserDto.getEmail())){
-            throw new EmailTakenException("The email address is already associated with an existing account on that platform");
+            throw new EmailTakenException("Email already in use");
         }
 
         User registeredUser = authenticationService.register(registerUserDto);

@@ -47,7 +47,7 @@ const RegisterPage = () => {
       <div className="w-full max-w-md p-8 rounded-3xl border border-gray-800 bg-[#161616] shadow-2xl">
         <div className="text-center mb-8">
           <div className="inline-flex p-3 rounded-2xl bg-emerald-500/10 mb-4">
-            <ShieldCheck className="text-emerald-500" size={32} />
+            <img src="/images/logo-heading.svg" alt="Logo" className="w-20 h-20" />
           </div>
           <h1 className="text-3xl font-black text-white tracking-tighter">
             Join MarketSense

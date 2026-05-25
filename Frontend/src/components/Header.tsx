@@ -27,9 +27,7 @@ const Header = () => {
       <header className="max-w-7xl mx-auto flex items-center justify-between h-16 px-6 border border-gray-800 bg-[#0B0E11]/80 backdrop-blur-md rounded-full shadow-2xl">
         <div className="flex items-center gap-8">
           <NavLink className="flex items-center gap-2 group" to="/">
-            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center font-bold text-black text-xl shadow-[0_0_15px_rgba(16,185,129,0.4)]">
-              M
-            </div>
+            <img src="/images/logo.svg" alt="Logo" className="w-8 h-8" />
             <span className="text-xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors">
               MarketSense
             </span>
