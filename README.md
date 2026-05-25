@@ -106,4 +106,32 @@ To bypass high-frequency external network overhead and API call rate limitations
 
 ---
 
+## Interface Previews
+
+### Authentication
+| Register | Login |
+| :--- | :--- |
+| ![Register](assets/screenshots/register.png) | ![Login](assets/screenshots/login.png) |
+
+### Homepage
+| Guest View (Landing) | Authenticated View |
+| :--- | :--- |
+| ![Homepage Guest](assets/screenshots/homepage-guest.png) | ![Homepage Auth](assets/screenshots/homepage-auth.png) |
+
+### Core Functionality
+| Markets Page | Watchlist Page | Search Example |
+| :--- | :--- | :--- |
+| ![Markets](assets/screenshots/markets-page.png) | ![Watchlist](assets/screenshots/watchlist.png) | ![Search](assets/screenshots/search-example.png) |
+
+| Stock Detail Page | AI Analysis (from Watchlist) | Toast Notifications |
+| :--- | :--- | :--- |
+| ![Stock Page](assets/screenshots/stock-detail.png) | ![AI Overview](assets/screenshots/ai-analysis.png) | ![Toast](assets/screenshots/toast-notifications.png) |
+
+### System & Security
+| Global Exception Handling | Change Password |
+| :--- | :--- |
+| ![Error Validation](assets/screenshots/error-validation.png) | ![Change Password](assets/screenshots/change-password.png) |
+
+---
+
 *Disclaimer: This system is developed exclusively as an engineering project. Financial analytics and summaries served via the platform do not constitute official financial advisory statements.*
