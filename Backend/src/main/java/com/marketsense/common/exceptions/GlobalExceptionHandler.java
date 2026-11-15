@@ -5,6 +5,7 @@ import io.jsonwebtoken.security.SignatureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
+import org.springframework.mail.MailException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,6 +29,21 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleAiAnalysis(AiAnalysisException exception) {
         ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(502), exception.getMessage());
         errorDetail.setProperty("description", "The AI analysis could not be generated. Please try again.");
+        return errorDetail;
+    }
+
+    @ExceptionHandler(EmptyWatchlistException.class)
+    public ProblemDetail handleEmptyWatchlist(EmptyWatchlistException exception) {
+        ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(400), exception.getMessage());
+        errorDetail.setProperty("field", "watchlist");
+        return errorDetail;
+    }
+
+    @ExceptionHandler(MailException.class)
+    public ProblemDetail handleMail(MailException exception) {
+        exception.printStackTrace();
+        ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(502), "Could not send the email. Check the SMTP settings.");
+        errorDetail.setProperty("description", "The mail server rejected or could not be reached.");
         return errorDetail;
     }
 

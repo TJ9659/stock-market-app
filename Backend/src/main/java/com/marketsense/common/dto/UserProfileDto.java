@@ -10,11 +10,13 @@ public class UserProfileDto {
     private String firstName;
     private String lastName;
     private Role role;
+    private boolean digestEnabled;
 
     public UserProfileDto(User user) {
         this.email = user.getEmail();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.role = user.getRole();
+        this.digestEnabled = user.isDigestEnabled();
     }
 }

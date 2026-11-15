@@ -1,23 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { isAxiosError } from "axios";
 import * as z from "zod";
+import { Mail } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { toast } from "sonner";
 import { useAuth } from "../../context/AuthContext";
+import api from "../../services/api";
 
 const profileSchema = z.object({
   firstName: z.string().min(3, "First name must be at least 3 characters"),
   lastName: z.string().min(3, "Last name must be at least 3 characters"),
   email: z.string().email("Invalid email address"),
+  digestEnabled: z.boolean(),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 const ProfileEditPage = () => {
   const { user, updateUser } = useAuth();
+  const [sendingTest, setSendingTest] = useState(false);
   const {
     register,
     handleSubmit,
@@ -29,6 +34,7 @@ const ProfileEditPage = () => {
       firstName: user?.firstName,
       lastName: user?.lastName,
       email: user?.email,
+      digestEnabled: user?.digestEnabled ?? true,
     },
   });
 
@@ -38,6 +44,7 @@ const ProfileEditPage = () => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        digestEnabled: user.digestEnabled ?? true,
       });
     }
   }, [user, reset]);
@@ -47,8 +54,23 @@ const ProfileEditPage = () => {
       await updateUser(data);
 
       toast.success("Profile updated successfully");
-    } catch (error) {
+    } catch {
       toast.error("Failed to update profile");
+    }
+  };
+
+  const sendTestDigest = async () => {
+    setSendingTest(true);
+    try {
+      const response = await api.post("/digest/test");
+      toast.success(
+        `Test digest with ${response.data.stocks} stock(s) sent to ${response.data.email}`,
+      );
+    } catch (error) {
+      const detail = isAxiosError(error) ? error.response?.data?.detail : null;
+      toast.error(detail ?? "Could not send the test digest");
+    } finally {
+      setSendingTest(false);
     }
   };
 
@@ -91,6 +113,37 @@ const ProfileEditPage = () => {
               <p className="text-red-500 text-sm">{errors.email.message}</p>
             )}
           </div>
+        </div>
+
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-4 space-y-4">
+          <label
+            htmlFor="digestEnabled"
+            className="flex items-start gap-3 hover:cursor-pointer"
+          >
+            <input
+              id="digestEnabled"
+              type="checkbox"
+              {...register("digestEnabled")}
+              className="mt-1 h-4 w-4 accent-emerald-500 hover:cursor-pointer"
+            />
+            <span>
+              <span className="block font-semibold">Daily email digest</span>
+              <span className="block text-sm text-zinc-400">
+                Weekday mornings at 8:00 AM (SGT): your watchlist's closing
+                prices, AI sentiment and top headlines.
+              </span>
+            </span>
+          </label>
+
+          <Button
+            type="button"
+            onClick={sendTestDigest}
+            disabled={sendingTest}
+            className="bg-zinc-800 hover:bg-zinc-700 text-white hover:cursor-pointer"
+          >
+            <Mail size={16} />
+            {sendingTest ? "Sending..." : "Send me a test digest"}
+          </Button>
         </div>
 
         <div className="flex justify-end gap-4">

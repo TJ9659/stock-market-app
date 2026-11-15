@@ -7,4 +7,5 @@ import lombok.Data;
 public class UpdateProfileRequestDto {
     private String firstName;
     private String lastName;
+    private Boolean digestEnabled;
 }

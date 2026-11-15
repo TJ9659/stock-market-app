@@ -3,6 +3,7 @@ export interface User {
   lastName: string;
   email: string;
   role: string;
+  digestEnabled: boolean;
 }
 
 export interface CompanyProfile {
