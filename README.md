@@ -143,6 +143,11 @@ To bypass high-frequency external network overhead and API call rate limitations
 | :--- | :--- |
 | ![Error Validation](assets/screenshots/error-validation.png) | ![Change Password](assets/screenshots/change-password.png) |
 
+### Daily Email Digest
+| Watchlist Digest (Mailpit) |
+| :--- |
+| ![Email Digest](assets/screenshots/email-digest.png) |
+
 ---
 
 *Disclaimer: This system is developed exclusively as an engineering project. Financial analytics and summaries served via the platform do not constitute official financial advisory statements.*
