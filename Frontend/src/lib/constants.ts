@@ -335,8 +335,8 @@ export const TECHNICAL_ANALYSIS_WIDGET_CONFIG = (symbol: string) => ({
   locale: "en",
   interval: "1m",
   disableInterval: false,
-  width: 425,
-  height: 450,
+  width: "100%",
+  height: "100%",
   symbol: `${symbol}`,
   showIntervalTabs: true,
 });
@@ -347,6 +347,6 @@ export const FUNDAMENTAL_DATA_WIDGET_CONFIG = (symbol: string) => ({
   displayMode: "regular",
   isTransparent: false,
   locale: "en",
-  width: 400,
-  height: 400,
+  width: "100%",
+  height: "100%",
 });

@@ -8,19 +8,29 @@ interface UseTradingViewWidgetProps {
 const useTradingViewWidget = ({ scriptUrl, config }: UseTradingViewWidgetProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!containerRef.current) return;
+  // Compare configs by value, not object identity: callers often build the config inline
+  // (e.g. CONFIG(symbol)), which creates a new object every render and would otherwise
+  // tear down and re-inject the TradingView script on every state change.
+  const configKey = JSON.stringify(config);
 
-    containerRef.current.innerHTML = ""; 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.innerHTML = "";
 
     const script = document.createElement("script");
     script.src = `https://s3.tradingview.com/external-embedding/${scriptUrl}`;
     script.type = "text/javascript";
     script.async = true;
-    script.innerHTML = JSON.stringify(config);
+    script.innerHTML = configKey;
 
-    containerRef.current.appendChild(script);
-  }, [config, scriptUrl]);
+    container.appendChild(script);
+
+    return () => {
+      container.innerHTML = "";
+    };
+  }, [configKey, scriptUrl]);
 
   return containerRef;
 }

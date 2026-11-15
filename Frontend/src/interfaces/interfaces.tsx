@@ -15,6 +15,7 @@ export interface CompanyProfile {
   marketCapitalization: number;
   ipo: string;
   webUrl: string;
+  exchange?: string;
 }
 
 export interface StockQuote {

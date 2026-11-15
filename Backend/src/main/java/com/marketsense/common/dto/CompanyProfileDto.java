@@ -24,4 +24,6 @@ public class CompanyProfileDto {
 
 
     String ipo;
+
+    String exchange;
 }
