@@ -1,28 +1,18 @@
-import { useNavigate, Link } from "react-router";
+import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import {
   LogOut,
   User,
-  Settings,
-  CreditCard,
-  LayoutDashboard,
 } from "lucide-react";
-import { Button } from "../components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
-import { useEffect } from "react";
 
 interface GlobalSearchProps {
   setMobileMenuOpen?: (open: boolean) => void;

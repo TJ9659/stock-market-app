@@ -73,7 +73,7 @@ export default function WatchlistPage() {
 
   const handleRemove = async (id: number, symbol: string) => {
     try {
-      await api.delete(`/api/watchlist/${id}`);
+      await api.delete(`/watchlist/${id}`);
       toast.info(`${symbol} removed from watchlist`);
 
       if (watchlist.length === 1 && currentPage > 0) {

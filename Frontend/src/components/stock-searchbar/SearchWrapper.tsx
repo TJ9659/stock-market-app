@@ -1,8 +1,8 @@
 import { Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 
 interface SearchWrapperProps {
-  setOpen: (open: boolean) => void;
+  setOpen: Dispatch<SetStateAction<boolean>>;
   setMobileMenuOpen?: (open: boolean) => void;
 }
 

@@ -35,7 +35,8 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/logout").permitAll()
+                                .requestMatchers("/api/auth/me").authenticated()
 
                                 .requestMatchers("/api/stocks/**").permitAll()
 

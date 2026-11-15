@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TradingViewWidget from "../components/TradingViewWidget";
 import {
   ADVANCED_REAL_TIME_CHART_WIDGET_CONFIG,
@@ -25,6 +25,16 @@ const StockDetailPage = () => {
     null,
   );
   const [quote, setQuote] = useState<StockQuote | null>(null);
+
+  // Built once per symbol/exchange so the TradingView widgets don't reload on unrelated re-renders.
+  const widgetConfigs = useMemo(() => {
+    const tvSymbol = getTradingViewSymbol(symbol ?? "", companyProfile?.exchange);
+    return {
+      chart: ADVANCED_REAL_TIME_CHART_WIDGET_CONFIG(tvSymbol),
+      technical: TECHNICAL_ANALYSIS_WIDGET_CONFIG(tvSymbol),
+      financials: FUNDAMENTAL_DATA_WIDGET_CONFIG(tvSymbol),
+    };
+  }, [symbol, companyProfile?.exchange]);
 
   const checkStatus = async () => {
     try {
@@ -172,30 +182,28 @@ const StockDetailPage = () => {
         <div className="lg:col-span-3 rounded-2xl overflow-hidden border border-gray-800 bg-[#161616] p-2 gap-2">
           <div className="flex gap-2 flex-col">
             <TradingViewWidget
-              config={ADVANCED_REAL_TIME_CHART_WIDGET_CONFIG(
-                getTradingViewSymbol(symbol),
-              )}
+              config={widgetConfigs.chart}
               scriptUrl="embed-widget-advanced-chart.js"
               height={550}
               width="100%"
             />
-            <div className="flex flex-col md:flex-row gap-1">
-              <TradingViewWidget
-                scriptUrl="embed-widget-technical-analysis.js"
-                config={TECHNICAL_ANALYSIS_WIDGET_CONFIG(
-                  getTradingViewSymbol(symbol),
-                )}
-                width="100%"
-                height={400}
-              />
-              <TradingViewWidget
-                scriptUrl="embed-widget-financials.js"
-                config={FUNDAMENTAL_DATA_WIDGET_CONFIG(
-                  getTradingViewSymbol(symbol),
-                )}
-                width="100%"
-                height={400}
-              />
+            <div className="flex flex-col md:flex-row gap-2">
+              <div className="flex-1 min-w-0">
+                <TradingViewWidget
+                  scriptUrl="embed-widget-technical-analysis.js"
+                  config={widgetConfigs.technical}
+                  width="100%"
+                  height={420}
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <TradingViewWidget
+                  scriptUrl="embed-widget-financials.js"
+                  config={widgetConfigs.financials}
+                  width="100%"
+                  height={420}
+                />
+              </div>
             </div>
           </div>
         </div>

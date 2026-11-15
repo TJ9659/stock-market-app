@@ -1,6 +1,4 @@
 // import axios from "axios";
-import { useEffect, useState } from "react";
-import { Link } from "react-router";
 import TradingViewWidget from "../components/TradingViewWidget";
 import {
   HEATMAP_WIDGET_CONFIG,

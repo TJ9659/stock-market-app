@@ -1,7 +1,6 @@
 import TradingViewWidget from "../components/TradingViewWidget";
 import {
   HEATMAP_WIDGET_CONFIG,
-  SYMBOL_INFO_WIDGET_CONFIG,
   TICKER_WIDGET_CONFIG,
 } from "../lib/constants";
 
