@@ -11,10 +11,25 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.ResourceAccessException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+
+    @ExceptionHandler(ResourceAccessException.class)
+    public ProblemDetail handleUpstreamTimeout(ResourceAccessException exception) {
+        ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(504), exception.getMessage());
+        errorDetail.setProperty("description", "An external service took too long to respond. Please try again.");
+        return errorDetail;
+    }
+
+    @ExceptionHandler(AiAnalysisException.class)
+    public ProblemDetail handleAiAnalysis(AiAnalysisException exception) {
+        ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(502), exception.getMessage());
+        errorDetail.setProperty("description", "The AI analysis could not be generated. Please try again.");
+        return errorDetail;
+    }
 
     @ExceptionHandler(EmailTakenException.class)
     public ProblemDetail handleEmailTaken(EmailTakenException exception) {
