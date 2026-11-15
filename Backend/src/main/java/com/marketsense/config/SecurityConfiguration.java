@@ -37,6 +37,7 @@ public class SecurityConfiguration {
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/logout").permitAll()
                                 .requestMatchers("/api/auth/me").authenticated()
+                                .requestMatchers("/api/digest/unsubscribe").permitAll()
 
                                 .requestMatchers("/api/stocks/**").permitAll()
 

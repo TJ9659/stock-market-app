@@ -29,6 +29,9 @@ public class UserService {
 
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
+        if (request.getDigestEnabled() != null) {
+            user.setDigestEnabled(request.getDigestEnabled());
+        }
 
         User savedUser = userRepository.save(user);
         return new UserProfileDto(savedUser);

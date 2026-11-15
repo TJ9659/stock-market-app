@@ -16,6 +16,12 @@ public interface WatchlistRepository extends JpaRepository<Watchlist, Long> {
 
     Page<Watchlist> findByUserId(Long userId, Pageable pageable);
 
+    @Query("SELECT w FROM Watchlist w JOIN FETCH w.user u WHERE u.digestEnabled = true ORDER BY u.id, w.symbol")
+    List<Watchlist> findAllForDigest();
+
+    @Query("SELECT w FROM Watchlist w JOIN FETCH w.user u WHERE u.id = :userId ORDER BY w.symbol")
+    List<Watchlist> findAllByUserIdWithUser(@Param("userId") Long userId);
+
     @Query("""
        SELECT w FROM Watchlist w 
        WHERE w.user.id = :userId 

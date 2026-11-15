@@ -8,6 +8,7 @@
 * **AI-Powered Discovery & Sentiment:** Utilizes Google Gemini AI to parse financial news headlines, extracting underlying sentiment scores and structural outlooks for specific stocks.
 * **Performance Optimized Caching:** Implements Caffeine-based caching configurations in Spring Boot with multi-tier TTL policies to shield API limits and optimize system latency.
 * **State-Managed Watchlists:** Custom personalized stock watchlist system mapped to individual users for tracking targeted financial portfolios.
+* **Daily Watchlist Digest:** Weekday morning email with each user's watchlist prices, AI sentiment and headlines.
 * **Dockerized Infrastructure:** Containerized database setup using Docker Compose to ensure predictable environment reproducibility across localized setups.
 
 ---
@@ -47,9 +48,9 @@ cp .env.example .env
 
 ```
 
-#### 2. Database Provisioning (Docker)
+#### 2. Database & Mail Provisioning (Docker)
 
-Spin up the localized PostgreSQL instance using Docker Compose from the root directory:
+Start PostgreSQL and Mailpit from the root directory:
 
 ```bash
 docker-compose up -d
@@ -97,6 +98,16 @@ npm run dev
 
 ---
 
+## Daily Watchlist Digest
+
+Weekdays at 8:00 AM SGT, a scheduled job emails each subscribed user their watchlist's price, daily change, AI sentiment and top headlines.
+
+* Each symbol is fetched once per run, even if many users watch it.
+* Users can turn it off on the Profile page or via the unsubscribe link in the email.
+* Locally, emails go to Mailpit at [localhost:8025](http://localhost:8025). For Gmail, set the `MAIL_*` values in `Backend/.env`.
+
+---
+
 ## System Performance & Optimization Strategy
 
 To bypass high-frequency external network overhead and API call rate limitations, Marketsense enforces explicit internal caching strategies:
@@ -131,6 +142,11 @@ To bypass high-frequency external network overhead and API call rate limitations
 | Global Exception Handling | Change Password |
 | :--- | :--- |
 | ![Error Validation](assets/screenshots/error-validation.png) | ![Change Password](assets/screenshots/change-password.png) |
+
+### Daily Email Digest
+| Watchlist Digest (Mailpit) |
+| :--- |
+| ![Email Digest](assets/screenshots/email-digest.png) |
 
 ---
 
