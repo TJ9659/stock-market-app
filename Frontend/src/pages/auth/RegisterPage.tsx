@@ -1,8 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router";
-import { Mail, Lock, User, ArrowRight, ShieldCheck } from "lucide-react";
+import { Mail, Lock, User, ArrowRight } from "lucide-react";
 import { useState } from "react";
-import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 
 const RegisterPage = () => {

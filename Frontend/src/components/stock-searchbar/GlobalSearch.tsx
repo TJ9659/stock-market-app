@@ -1,8 +1,6 @@
 
 import { StockSearch } from "./StockSearch";
-import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
-import { DialogDescription, DialogTitle } from "../ui/dialog";
+import { useState } from "react";
 import { CommandDialog } from "../ui/command";
 import SearchWrapper from "./SearchWrapper";
 

@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router";
 import { Button } from "../components/ui/button";
 import { TrendingDown, Home } from "lucide-react";

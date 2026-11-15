@@ -1,12 +1,8 @@
-import { useNavigate, Link } from "react-router";
+import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import {
   LogOut,
   User,
-  Settings,
-  CreditCard,
-  LayoutDashboard,
-  ArrowDown,
   ChevronDown,
 } from "lucide-react";
 import {

@@ -1,6 +1,6 @@
-import { Menu, Search, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router"; // Standard for React Router
+import { NavLink } from "react-router"; // Standard for React Router
 import { GlobalSearch } from "./stock-searchbar/GlobalSearch";
 import { useAuth } from "../context/AuthContext";
 import { UserNav } from "./UserNav";
@@ -18,8 +18,7 @@ const mobileLinkStyles = ({ isActive }: any) =>
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
-  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
 
   return (

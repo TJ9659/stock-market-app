@@ -1,8 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router";
 import { useAuth } from "../../context/AuthContext";
-import { Mail, Lock, ArrowRight, BarChart3, CircleAlert } from "lucide-react";
-import api from "../../services/api";
+import { Mail, Lock, ArrowRight, CircleAlert } from "lucide-react";
 import { useState } from "react";
 
 const LoginPage = () => {
