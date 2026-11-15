@@ -18,6 +18,20 @@ import org.springframework.web.client.ResourceAccessException;
 public class GlobalExceptionHandler {
 
 
+    @ExceptionHandler(EmailNotVerifiedException.class)
+    public ProblemDetail handleEmailNotVerified(EmailNotVerifiedException exception) {
+        ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
+        errorDetail.setProperty("code", "EMAIL_NOT_VERIFIED");
+        return errorDetail;
+    }
+
+    @ExceptionHandler(InvalidVerificationTokenException.class)
+    public ProblemDetail handleInvalidVerificationToken(InvalidVerificationTokenException exception) {
+        ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(400), exception.getMessage());
+        errorDetail.setProperty("code", "INVALID_TOKEN");
+        return errorDetail;
+    }
+
     @ExceptionHandler(ResourceAccessException.class)
     public ProblemDetail handleUpstreamTimeout(ResourceAccessException exception) {
         ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(504), exception.getMessage());

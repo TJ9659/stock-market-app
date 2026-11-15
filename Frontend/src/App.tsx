@@ -10,6 +10,8 @@ import WatchlistPage from "./pages/WatchlistPage";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
+import CheckEmailPage from "./pages/auth/CheckEmailPage";
+import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
 import PublicRoute from "./components/routes/PublicRoute";
 import { Toaster } from "./components/ui/sonner";
 import { ScrollToTop } from "./components/ScrollToTop";
@@ -42,7 +44,9 @@ function App() {
             <Route element={<PublicRoute />}>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/check-email" element={<CheckEmailPage />} />
             </Route>
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
 
             <Route path="/markets" element={<MarketsOverview />} />
             <Route path="/stock/:symbol" element={<StockDetailPage />} />

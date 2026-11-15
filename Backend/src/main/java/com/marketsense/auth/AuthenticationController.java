@@ -2,6 +2,9 @@ package com.marketsense.auth;
 
 import com.marketsense.auth.dto.LoginUserDto;
 import com.marketsense.auth.dto.RegisterUserDto;
+import com.marketsense.auth.dto.ResendVerificationRequest;
+import com.marketsense.auth.dto.VerifyEmailRequest;
+import org.springframework.http.HttpStatus;
 import com.marketsense.common.dto.UserProfileDto;
 import com.marketsense.common.exceptions.EmailTakenException;
 import com.marketsense.user.User;
@@ -27,11 +30,15 @@ public class AuthenticationController {
 
     private final UserService userService;
 
-    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService, UserRepository userRepository, UserService userService) {
+    private final EmailVerificationService emailVerificationService;
+
+    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService, UserRepository userRepository, UserService userService,
+                                    EmailVerificationService emailVerificationService) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
         this.userRepository = userRepository;
         this.userService = userService;
+        this.emailVerificationService = emailVerificationService;
     }
 
 
@@ -43,11 +50,22 @@ public class AuthenticationController {
         }
 
         User registeredUser = authenticationService.register(registerUserDto);
-        String jwtToken = jwtService.generateToken(registeredUser);
 
-        LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpiration(), new UserProfileDto(registeredUser));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "message", "Account created. Check your email to verify your account.",
+                "email", registeredUser.getEmail()));
+    }
 
-        return ResponseEntity.ok(loginResponse);
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> verifyEmail(@RequestBody VerifyEmailRequest request) {
+        emailVerificationService.verify(request.token());
+        return ResponseEntity.ok(Map.of("message", "Email verified. You can now sign in."));
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<?> resendVerification(@RequestBody ResendVerificationRequest request) {
+        emailVerificationService.resend(request.email());
+        return ResponseEntity.ok(Map.of("message", "If that account exists and isn't verified yet, we've sent a new link."));
     }
 
     @PostMapping("/login")

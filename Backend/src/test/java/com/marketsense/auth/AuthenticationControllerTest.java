@@ -1,6 +1,8 @@
 package com.marketsense.auth;
 
 import com.marketsense.auth.dto.RegisterUserDto;
+import com.marketsense.common.exceptions.EmailNotVerifiedException;
+import com.marketsense.common.exceptions.InvalidVerificationTokenException;
 import com.marketsense.config.SecurityConfiguration;
 import com.marketsense.user.User;
 import com.marketsense.user.UserRepository;
@@ -17,6 +19,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,21 +46,60 @@ class AuthenticationControllerTest {
     @MockitoBean UserService userService;
     @MockitoBean AuthenticationProvider authenticationProvider;
     @MockitoBean UserDetailsService userDetailsService;
+    @MockitoBean EmailVerificationService emailVerificationService;
 
     @Test
-    void registerIsPublicAndReturnsTokenAndProfile() throws Exception {
+    void registerIsPublicAndDoesNotLogTheUserIn() throws Exception {
         User saved = new User("Jane", "Doe", "jane@example.com", "hashed");
         when(userRepository.existsByEmail("jane@example.com")).thenReturn(false);
         when(authenticationService.register(any(RegisterUserDto.class))).thenReturn(saved);
-        when(jwtService.generateToken(saved)).thenReturn("jwt-token");
-        when(jwtService.getExpiration()).thenReturn(604800000L);
 
         mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON).content(REGISTER_BODY))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.email").value("jane@example.com"))
+                .andExpect(jsonPath("$.token").doesNotExist());
+
+        verify(jwtService, never()).generateToken(any());
+    }
+
+    @Test
+    void loginBeforeVerifyingReturns403WithCode() throws Exception {
+        when(authenticationService.login(any())).thenThrow(new EmailNotVerifiedException("Please verify your email before signing in."));
+
+        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"jane@example.com\",\"password\":\"secret123\"}"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value("EMAIL_NOT_VERIFIED"))
+                .andExpect(jsonPath("$.detail").value("Please verify your email before signing in."))
+                .andExpect(jsonPath("$.token").doesNotExist());
+    }
+
+    @Test
+    void verifyEmailIsPublic() throws Exception {
+        mockMvc.perform(post("/api/auth/verify-email").contentType(MediaType.APPLICATION_JSON).content("{\"token\":\"abc\"}"))
+                .andExpect(status().isOk());
+
+        verify(emailVerificationService).verify("abc");
+    }
+
+    @Test
+    void verifyEmailWithBadTokenReturns400WithCode() throws Exception {
+        doThrow(new InvalidVerificationTokenException("This verification link is invalid or has already been used."))
+                .when(emailVerificationService).verify("bad");
+
+        mockMvc.perform(post("/api/auth/verify-email").contentType(MediaType.APPLICATION_JSON).content("{\"token\":\"bad\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_TOKEN"));
+    }
+
+    @Test
+    void resendIsPublicAndAlwaysReturnsTheSameResponse() throws Exception {
+        mockMvc.perform(post("/api/auth/resend-verification").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"nobody@example.com\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("jwt-token"))
-                .andExpect(jsonPath("$.expiresIn").value(604800000L))
-                .andExpect(jsonPath("$.user.email").value("jane@example.com"))
-                .andExpect(jsonPath("$.user.password").doesNotExist());
+                .andExpect(jsonPath("$.message").value("If that account exists and isn't verified yet, we've sent a new link."));
+
+        verify(emailVerificationService).resend("nobody@example.com");
     }
 
     @Test
