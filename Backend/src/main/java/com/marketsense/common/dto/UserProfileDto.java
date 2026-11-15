@@ -11,6 +11,7 @@ public class UserProfileDto {
     private String lastName;
     private Role role;
     private boolean digestEnabled;
+    private boolean emailVerified;
 
     public UserProfileDto(User user) {
         this.email = user.getEmail();
@@ -18,5 +19,6 @@ public class UserProfileDto {
         this.lastName = user.getLastName();
         this.role = user.getRole();
         this.digestEnabled = user.isDigestEnabled();
+        this.emailVerified = user.isEmailVerified();
     }
 }

@@ -42,6 +42,9 @@ public class User implements UserDetails {
     @Column(nullable = false, columnDefinition = "boolean not null default true")
     private boolean digestEnabled = true;
 
+    @Column(nullable = false, columnDefinition = "boolean not null default true")
+    private boolean emailVerified;
+
     public User(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;

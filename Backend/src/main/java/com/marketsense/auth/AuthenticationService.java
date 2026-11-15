@@ -5,6 +5,7 @@ import com.marketsense.auth.dto.LoginUserDto;
 import com.marketsense.auth.dto.RegisterUserDto;
 import com.marketsense.common.dto.UserProfileDto;
 import com.marketsense.common.enums.Role;
+import com.marketsense.common.exceptions.EmailNotVerifiedException;
 import com.marketsense.user.User;
 import com.marketsense.user.UserRepository;
 import jakarta.validation.Valid;
@@ -21,11 +22,14 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final EmailVerificationService emailVerificationService;
 
-    public AuthenticationService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, AuthenticationManager authenticationManager){
+    public AuthenticationService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
+                                 EmailVerificationService emailVerificationService){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.emailVerificationService = emailVerificationService;
     }
 
     @Transactional
@@ -33,7 +37,9 @@ public class AuthenticationService {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         User user = new User(request.getFirstName(), request.getLastName(), request.getEmail(), encodedPassword);
         user.setRole(Role.ROLE_USER);
+        user.setEmailVerified(false);
         User savedUser = userRepository.save(user);
+        emailVerificationService.createAndSend(savedUser);
 
         return savedUser;
     }
@@ -46,8 +52,14 @@ public class AuthenticationService {
                 )
         );
 
-        return userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(()-> new RuntimeException("User not found."));
+
+        if (!user.isEmailVerified()) {
+            throw new EmailNotVerifiedException("Please verify your email before signing in.");
+        }
+
+        return user;
     }
 
 

@@ -3,11 +3,18 @@ import api from "../services/api";
 import type { User } from "../interfaces/interfaces";
 
 
+export interface AuthError {
+  message: string;
+  code?: string;
+}
+
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   login: (formData: any) => Promise<void>;
-  registerUser: (formData: any) => Promise<void>;
+  registerUser: (formData: any) => Promise<{ email: string }>;
+  verifyEmail: (token: string) => Promise<void>;
+  resendVerification: (email: string) => Promise<void>;
   updateUser: (formData: any) => Promise<void>;
   updatePassword: (formData: any) => Promise<void>;
   logout: () => void;
@@ -44,11 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const registerUser = async (formData: any) => {
     try {
       const response = await api.post("/auth/register", formData);
-      const { token, user: userData } = response.data;
-
-      localStorage.setItem("token", token);
-      setUser(userData);
-      setIsAuthenticated(true);
+      return { email: response.data.email as string };
     } catch (error: any) {
       console.log(error);
       if (error.response && error.response.data) {
@@ -73,11 +76,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(userData);
       setIsAuthenticated(true);
     } catch (error: any) {
-      throw (
-        error.response?.data?.message ||
-        "Failed to update profile. Please try again."
-      );
+      const data = error.response?.data;
+      const authError: AuthError = {
+        message:
+          data?.description ||
+          data?.detail ||
+          "Invalid credentials. Please try again.",
+        code: data?.code,
+      };
+      throw authError;
     }
+  };
+
+  const verifyEmail = async (token: string) => {
+    try {
+      await api.post("/auth/verify-email", { token });
+    } catch (error: any) {
+      const authError: AuthError = {
+        message:
+          error.response?.data?.detail ||
+          "We couldn't verify your email. Please try again.",
+        code: error.response?.data?.code,
+      };
+      throw authError;
+    }
+  };
+
+  const resendVerification = async (email: string) => {
+    await api.post("/auth/resend-verification", { email });
   };
 
   const updateUser = async (formData: any) => {
@@ -132,6 +158,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         logout,
         loading,
         registerUser,
+        verifyEmail,
+        resendVerification,
         updateUser,
         updatePassword,
       }}

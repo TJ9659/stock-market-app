@@ -1,13 +1,18 @@
 import { useForm } from "react-hook-form";
-import { useNavigate, Link } from "react-router";
-import { useAuth } from "../../context/AuthContext";
-import { Mail, Lock, ArrowRight, CircleAlert } from "lucide-react";
+import { useNavigate, Link, useSearchParams } from "react-router";
+import { useAuth, type AuthError } from "../../context/AuthContext";
+import { Mail, Lock, ArrowRight, CircleAlert, CircleCheck } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const { login, resendVerification } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const justVerified = searchParams.get("verified") === "1";
   const [serverError, setServerError] = useState<string | null>(null);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+  const [resending, setResending] = useState(false);
 
   const {
     register,
@@ -20,16 +25,31 @@ const LoginPage = () => {
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: { email: string; password: string }) => {
     setServerError(null);
+    setUnverifiedEmail(null);
     try {
       await login(data);
       navigate("/markets");
-    } catch (error: any) {
-      setServerError(
-        error.response?.data?.message ||
-          "Invalid credentials. Please try again.",
-      );
+    } catch (error) {
+      const authError = error as AuthError;
+      setServerError(authError.message);
+      if (authError.code === "EMAIL_NOT_VERIFIED") {
+        setUnverifiedEmail(data.email);
+      }
+    }
+  };
+
+  const resend = async () => {
+    if (!unverifiedEmail) return;
+    setResending(true);
+    try {
+      await resendVerification(unverifiedEmail);
+      toast.success(`Verification email sent to ${unverifiedEmail}`);
+    } catch {
+      toast.error("Could not resend the email. Please try again.");
+    } finally {
+      setResending(false);
     }
   };
 
@@ -48,9 +68,27 @@ const LoginPage = () => {
           </p>
         </div>
 
+        {justVerified && !serverError && (
+          <div className="flex items-center justify-center gap-2 mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
+            <CircleCheck size={18} /> <span>Email verified. Please sign in.</span>
+          </div>
+        )}
+
         {serverError && (
-          <div className="flex items-center justify-center gap-2 mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold">
-           <CircleAlert size={18}/> <span>{serverError}</span>
+          <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold">
+            <div className="flex items-center justify-center gap-2">
+              <CircleAlert size={18}/> <span>{serverError}</span>
+            </div>
+            {unverifiedEmail && (
+              <button
+                type="button"
+                onClick={resend}
+                disabled={resending}
+                className="mt-3 w-full text-emerald-400 hover:text-emerald-300 underline disabled:opacity-50 hover:cursor-pointer"
+              >
+                {resending ? "Sending..." : "Resend verification email"}
+              </button>
+            )}
           </div>
         )}
 

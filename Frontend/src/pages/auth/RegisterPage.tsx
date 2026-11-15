@@ -30,9 +30,9 @@ const RegisterPage = () => {
     setServerError(null);
     try {
       const { confirmPassword, ...registerData } = data;
-      await registerUser(registerData);
+      const { email } = await registerUser(registerData);
 
-      navigate("/");
+      navigate(`/check-email?email=${encodeURIComponent(email)}`);
     } catch (error: any) {
       setServerError(
         error ||
